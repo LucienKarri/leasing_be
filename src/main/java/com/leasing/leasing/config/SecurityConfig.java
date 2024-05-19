@@ -30,7 +30,9 @@ public class SecurityConfig {
                         auth -> auth
                                 .requestMatchers(HttpMethod.POST, "/sign-in").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/sign-out").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/refresh").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                                .requestMatchers( "/api/vehicle").permitAll()
                                 .anyRequest().authenticated()
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

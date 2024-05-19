@@ -13,7 +13,7 @@ public class Beans {
 
     @Value("admin-cli")
     private String adminCli;
-    @Value("XiiN2VgOM8ZGPc5Ah8BkZGFoDK6Qdrpy")
+    @Value("NdQ0XJiB2MOhtd3P52t97A5BfLa6mSjJ")
     private String adminCliSecret;
     @Value("project")
     private String realm;

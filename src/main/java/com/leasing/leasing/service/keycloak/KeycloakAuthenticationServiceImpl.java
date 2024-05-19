@@ -12,8 +12,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.leasing.leasing.DTO.RefreshTokenDTO;
 import com.leasing.leasing.DTO.SignInDTO;
-import com.leasing.leasing.DTO.SignOutDTO;
 
 @Service
 public class KeycloakAuthenticationServiceImpl implements KeycloakAuthenticationService{
@@ -24,17 +24,19 @@ public class KeycloakAuthenticationServiceImpl implements KeycloakAuthentication
     private String realm;
     @Value("project_realm")
     private String clientId;
-    @Value("9QvhxhJEEXfEMKnQq5Gixkq4uhvy8IWT")
+    @Value("t0My4qmj9Sgtb1INRtkFT7xp1WtEn6LC")
     private String clientSecret;
     @Value("password")
-    private String grantType;
+    private String grantTypePassword;
+    @Value("refresh_token")
+    private String grantTypeRefresh;
 
     @Override
     public AccessTokenResponse signIn(SignInDTO signInDTO) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("username", signInDTO.username());
         params.add("password", signInDTO.password());
-        params.add("grant_type", grantType);
+        params.add("grant_type", grantTypePassword);
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
 
@@ -51,9 +53,9 @@ public class KeycloakAuthenticationServiceImpl implements KeycloakAuthentication
     }
 
     @Override
-    public void signOut(SignOutDTO signOutDTO) {
+    public void signOut(RefreshTokenDTO refreshTokenDTO) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("refresh_token", signOutDTO.refreshToken());
+        params.add("refresh_token", refreshTokenDTO.refreshToken());
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
 
@@ -61,6 +63,26 @@ public class KeycloakAuthenticationServiceImpl implements KeycloakAuthentication
 
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.postForEntity(getRequestUrl("logout"), requestEntity, Object.class);
+    }
+
+    @Override
+    public AccessTokenResponse refresh(RefreshTokenDTO refreshTokenDTO) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("refresh_token", refreshTokenDTO.refreshToken());
+        params.add("grant_type", grantTypeRefresh);
+        params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
+
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, getHttpHeaders());
+        
+        RestTemplate restTemplate = new RestTemplate();
+
+        return restTemplate.exchange(
+            getRequestUrl("token"),
+            HttpMethod.POST,
+            requestEntity,
+            AccessTokenResponse.class
+        ).getBody();
     }
 
     private HttpHeaders getHttpHeaders() {

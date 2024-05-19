@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.leasing.leasing.DTO.RefreshTokenDTO;
 import com.leasing.leasing.DTO.SignInDTO;
-import com.leasing.leasing.DTO.SignOutDTO;
 import com.leasing.leasing.service.keycloak.KeycloakAuthenticationService;
 
 import lombok.AllArgsConstructor;
@@ -23,9 +23,12 @@ public class KeycloakAuthenticationController {
     }
 
     @PostMapping("/sign-out")
-    public void signOut(@RequestBody SignOutDTO signOutDTO) {
-        keycloakAuthenticationService.signOut(signOutDTO);
+    public void signOut(@RequestBody RefreshTokenDTO refreshTokenDTO) {
+        keycloakAuthenticationService.signOut(refreshTokenDTO);
     }
-    
 
+    @PostMapping("/refresh")
+    public AccessTokenResponse refresh(@RequestBody RefreshTokenDTO refreshTokenDTO) {
+        return keycloakAuthenticationService.refresh(refreshTokenDTO);
+    }
 }
